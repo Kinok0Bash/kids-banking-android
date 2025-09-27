@@ -3,10 +3,6 @@ package edu.kinoko.kidsbankingandroid
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,15 +16,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             KidsBankingAndroidTheme {
                 val nav = rememberNavController()
-                NavHost(navController = nav, startDestination = "main") {
+                NavHost(navController = nav, startDestination = "auth") {
 
-                    composable("main") {
+                    composable("home") {
                         HomeScreen(
                             auth = { nav.navigate("auth") }
                         )
                     }
 
-                    composable(route = "auth") { AuthScreen() }
+                    composable(route = "auth") {
+                        AuthScreen(
+                            home = { nav.navigate("home") }
+                        )
+                    }
                 }
             }
         }
