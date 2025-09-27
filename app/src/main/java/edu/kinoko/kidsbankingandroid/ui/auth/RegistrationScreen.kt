@@ -12,6 +12,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,10 +26,12 @@ import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.theme.Secondary
 
 @Composable
-fun AuthScreen(
+fun RegistrationScreen(
     home: () -> Unit,
-    registration: () -> Unit,
+    auth: () -> Unit,
 ) {
+    var step by remember { mutableIntStateOf(1) }
+
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -36,7 +43,13 @@ fun AuthScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(380.dp)
+                    .height(
+                        if (step == 1) {
+                            450.dp
+                        } else {
+                            590.dp
+                        }
+                    )
                     .background(
                         color = Secondary,
                         shape = RoundedCornerShape(size = 16.dp)
@@ -46,27 +59,55 @@ fun AuthScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column {
-                    Header("Авторизация")
+                    Header("Регистрация")
                     Spacer(Modifier.size(12.dp))
-                    AuthForm()
+
+                    when (step) {
+                        1 -> AuthPartForm()
+                        2 -> UserInfoPartForm()
+                    }
                 }
-                AuthButtonsBlock(
-                    buttonText = "Войти",
-                    buttonAction = home,
-                    textButtonText = "Нет аккаунта? Регистрация",
-                    textButtonAction = registration,
-                )
+
+                if (step == 1) {
+                    AuthButtonsBlock(
+                        buttonText = "Дальше",
+                        buttonAction = { step = 2 },
+                        textButtonText = "Есть аккаунт? Войти",
+                        textButtonAction = auth
+                    )
+                } else {
+                    AuthButtonsBlock(
+                        buttonText = "Зарегистрироваться",
+                        buttonAction = home,
+                        textButtonText = "Назад",
+                        textButtonAction = { step = 1 }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun AuthForm() {
+fun AuthPartForm() {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FormInput("Логин")
-        FormInput("Пароль", true)
+        FormInput("Пароль", isPassword = true)
+        FormInput("Повторите пароль", isPassword = true)
+    }
+}
+
+@Composable
+fun UserInfoPartForm() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        FormInput("Фамилия")
+        FormInput("Имя")
+        FormInput("Отчество")
+        FormInput("Дата рождения")
+        FormInput("Город")
     }
 }
