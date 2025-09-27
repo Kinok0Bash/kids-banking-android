@@ -1,5 +1,6 @@
 package edu.kinoko.kidsbankingandroid.ui.auth
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import edu.kinoko.kidsbankingandroid.ui.components.AuthButtonsBlock
-import edu.kinoko.kidsbankingandroid.ui.components.FormInput
+import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
+import edu.kinoko.kidsbankingandroid.data.dto.config.FieldConfig
+import edu.kinoko.kidsbankingandroid.ui.auth.components.AuthButtonsBlock
+import edu.kinoko.kidsbankingandroid.ui.auth.components.DynamicForm
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.theme.Secondary
 
@@ -31,6 +34,21 @@ fun RegistrationScreen(
     auth: () -> Unit,
 ) {
     var step by remember { mutableIntStateOf(1) }
+    var formValues by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+
+    val authFields = listOf(
+        FieldConfig(AuthFieldNames.LOGIN, "Логин"),
+        FieldConfig(AuthFieldNames.PASSWORD, "Пароль", isPassword = true),
+        FieldConfig(AuthFieldNames.REPEAT_PASSWORD, "Повторите пароль", isPassword = true)
+    )
+
+    val userInfoFields = listOf(
+        FieldConfig(AuthFieldNames.SURNAME, "Фамилия"),
+        FieldConfig(AuthFieldNames.NAME, "Имя"),
+        FieldConfig(AuthFieldNames.PATRONYMIC, "Отчество"),
+        FieldConfig(AuthFieldNames.BIRTH_DATE, "Дата рождения"),
+        FieldConfig(AuthFieldNames.CITY, "Город")
+    )
 
     Scaffold { padding ->
         Column(
@@ -63,8 +81,21 @@ fun RegistrationScreen(
                     Spacer(Modifier.size(12.dp))
 
                     when (step) {
-                        1 -> AuthPartForm()
-                        2 -> UserInfoPartForm()
+                        1 -> DynamicForm(
+                            fields = authFields,
+                            values = formValues,
+                            onValueChange = { key, value ->
+                                formValues = formValues.toMutableMap().apply { put(key, value) }
+                            }
+                        )
+
+                        2 -> DynamicForm(
+                            fields = userInfoFields,
+                            values = formValues,
+                            onValueChange = { key, value ->
+                                formValues = formValues.toMutableMap().apply { put(key, value) }
+                            }
+                        )
                     }
                 }
 
@@ -78,36 +109,15 @@ fun RegistrationScreen(
                 } else {
                     AuthButtonsBlock(
                         buttonText = "Зарегистрироваться",
-                        buttonAction = home,
+                        buttonAction = {
+                            Log.d("Auth", formValues.toMap().toString())
+                            home()
+                        },
                         textButtonText = "Назад",
                         textButtonAction = { step = 1 }
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun AuthPartForm() {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        FormInput("Логин")
-        FormInput("Пароль", isPassword = true)
-        FormInput("Повторите пароль", isPassword = true)
-    }
-}
-
-@Composable
-fun UserInfoPartForm() {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        FormInput("Фамилия")
-        FormInput("Имя")
-        FormInput("Отчество")
-        FormInput("Дата рождения")
-        FormInput("Город")
     }
 }

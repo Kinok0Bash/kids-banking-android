@@ -1,4 +1,4 @@
-package edu.kinoko.kidsbankingandroid.ui.components
+package edu.kinoko.kidsbankingandroid.ui.auth.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
