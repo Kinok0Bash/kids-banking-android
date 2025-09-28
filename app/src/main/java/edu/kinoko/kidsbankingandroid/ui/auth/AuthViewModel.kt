@@ -10,10 +10,10 @@ import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
+import edu.kinoko.kidsbankingandroid.ui.auth.utils.parseRawDdMmYyyy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
@@ -43,7 +43,6 @@ class AuthViewModel(
         viewModelScope.launch {
             try {
                 svc.login(AuthenticationRequest(login = login, password = pass))
-                // по желанию можно дернуть whoAmI() сразу
                 _ui.value = AuthUiState.Success
             } catch (e: Exception) {
                 _ui.value = AuthUiState.Error(e.humanMessage())
@@ -63,12 +62,10 @@ class AuthViewModel(
             _ui.value = AuthUiState.Error("Пароли не совпадают")
             return
         }
-        val birthDate = try {
-            LocalDate.parse(
-                values[AuthFieldNames.BIRTH_DATE].orEmpty()
-            )
-        } catch (_: Exception) {
-            _ui.value = AuthUiState.Error("Дата введена не в верном формате (YYYY-MM-DD)")
+
+        val birthDate = parseRawDdMmYyyy(values[AuthFieldNames.BIRTH_DATE].orEmpty())
+        if (birthDate == null) {
+            _ui.value = AuthUiState.Error("Дата введена не в верном формате (dd.MM.yyyy)")
             return
         }
 
@@ -101,15 +98,14 @@ class AuthViewModel(
         Log.e("AuthViewModel", this.stackTraceToString())
         return when (this) {
             is HttpException -> {
-                val responseDto = Json.decodeFromString<ErrorResponse>(
+                Json.decodeFromString<ErrorResponse>(
                     response()
                         ?.errorBody()
                         ?.string()
                         ?: "{\"error\":\"Неизвестная ошибка\"}"
-                )
-
-                "Сервер: ${code()}: ${responseDto.error}"
+                ).error
             }
+
             is IOException -> "Проблема с сетью"
             else -> message ?: "Неизвестная ошибка"
         }
