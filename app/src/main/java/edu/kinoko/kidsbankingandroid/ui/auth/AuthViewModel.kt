@@ -10,6 +10,7 @@ import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
+import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.parseRawDdMmYyyy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +43,13 @@ class AuthViewModel(
         _ui.value = AuthUiState.Loading
         viewModelScope.launch {
             try {
-                svc.login(AuthenticationRequest(login = login, password = pass))
+                val response = svc.login(
+                    AuthenticationRequest(
+                        login = login,
+                        password = pass
+                    )
+                )
+                UserStore.userData = response.user
                 _ui.value = AuthUiState.Success
             } catch (e: Exception) {
                 _ui.value = AuthUiState.Error(e.humanMessage())
@@ -82,7 +89,8 @@ class AuthViewModel(
         _ui.value = AuthUiState.Loading
         viewModelScope.launch {
             try {
-                svc.register(req)
+                val response = svc.register(req)
+                UserStore.userData = response.user
                 _ui.value = AuthUiState.Success
             } catch (e: Exception) {
                 _ui.value = AuthUiState.Error(e.humanMessage())

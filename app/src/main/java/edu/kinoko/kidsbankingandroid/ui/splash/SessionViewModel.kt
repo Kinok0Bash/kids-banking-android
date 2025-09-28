@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
+import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class SessionViewModel(
         if (_state.value != SessionState.Checking) return
         viewModelScope.launch {
             _state.value = try {
-                auth.whoAmI()
+                UserStore.userData = auth.whoAmI()
                 SessionState.Authed
             } catch (_: Exception) {
                 SessionState.Guest

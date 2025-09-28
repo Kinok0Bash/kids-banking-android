@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.data.enums.Role
+import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.ui.home.component.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.home.component.Operation
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
@@ -47,7 +49,7 @@ fun HomeScreen(
         ) {
             Column {
                 ProfileButton(
-                    name = "Иван",
+                    name = UserStore.userData.name,
                     onClick = {
                         scope.launch {
                             sessionVm.logout()
@@ -59,7 +61,11 @@ fun HomeScreen(
                     }
                 )
                 AccountCart(
-                    cartName = "Счёт родителя",
+                    cartName = if (UserStore.userData.role == Role.PARENT) {
+                        "Счёт родителя"
+                    } else {
+                        "Счёт ребёнка"
+                    },
                     moneyQuantity = "1 084"
                 )
                 Spacer(Modifier.size(10.dp))
@@ -101,7 +107,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
@@ -110,7 +116,7 @@ fun HomeScreen(
                     Text("Перейти к счету ребенка")
                 }
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     colors = ButtonDefaults.buttonColors(containerColor = ButtonGreen),
                     modifier = Modifier
                         .fillMaxWidth()
