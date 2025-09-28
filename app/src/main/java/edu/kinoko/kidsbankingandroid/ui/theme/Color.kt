@@ -17,8 +17,8 @@ val ButtonRed = Color(0xFFA60007)
 val InfoBackground = Secondary
 val InfoIcon = Primary
 
-val WarnBackground = Color(0xFFFFF9C2)
-val WarnIcon = Color(0xFFD0B601)
+val WarnBackground = Color(0xFFFFF9B2)
+val WarnIcon = Color(0xFFBDA500)
 
 val ErrorBackground = Color(0xFFFF8989)
 val ErrorIcon = Color(0xFFC20101)

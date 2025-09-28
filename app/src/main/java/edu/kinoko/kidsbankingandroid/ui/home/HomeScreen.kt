@@ -23,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import edu.kinoko.kidsbankingandroid.data.enums.ModalType
 import edu.kinoko.kidsbankingandroid.ui.components.Header
+import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.theme.ButtonRed
 import kotlinx.coroutines.launch
 
@@ -67,6 +69,32 @@ fun HomeScreen(
                 enabled = !isBusy
             ) {
                 Text("Выйти")
+            }
+            Spacer(Modifier.size(50.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Modal(
+                    text = "Тест модалки с состоянием: INFO",
+                    modalType = ModalType.INFO
+                )
+                Modal(
+                    text = "Тест модалки с состоянием: SUCCESSFUL",
+                    modalType = ModalType.SUCCESSFUL
+                )
+                Modal(
+                    text = "Тест модалки с состоянием: WARN",
+                    modalType = ModalType.WARN
+                )
+                Modal(
+                    text = "Тест модалки с состоянием: ERROR",
+                    modalType = ModalType.ERROR
+                )
+                Spacer(Modifier.size(50.dp))
+                Modal(
+                    text = "Тест отображения длинного текста внутри модалки на случай если с сервера придет длинный ответ",
+                    modalType = ModalType.INFO
+                )
             }
         }
     }

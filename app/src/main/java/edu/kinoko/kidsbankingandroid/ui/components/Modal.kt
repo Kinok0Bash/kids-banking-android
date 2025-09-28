@@ -58,7 +58,7 @@ fun Modal(
             Text(
                 text = text,
                 color = modalType.iconColor,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 lineHeight = 20.sp,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.weight(1f)
