@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import edu.kinoko.kidsbankingandroid.data.dto.config.FieldConfig
+import edu.kinoko.kidsbankingandroid.data.dto.FieldConfig
 
 @Composable
 fun DynamicForm(
@@ -18,7 +18,8 @@ fun DynamicForm(
                 value = values[field.key] ?: "",
                 onValueChange = { onValueChange(field.key, it) },
                 placeholder = field.placeholder,
-                isPassword = field.isPassword
+                isPassword = field.isPassword,
+                isChangeble = field.isChangeble,
             )
         }
     }
