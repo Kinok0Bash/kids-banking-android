@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -15,10 +13,8 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
-import edu.kinoko.kidsbankingandroid.ui.splash.SessionViewModel
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
 import edu.kinoko.kidsbankingandroid.ui.theme.KidsBankingAndroidTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +22,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             KidsBankingAndroidTheme {
                 val nav = rememberNavController()
-                val scope = rememberCoroutineScope()
-                val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
 
                 val backEntry by nav.currentBackStackEntryAsState()
                 val isRoot = nav.previousBackStackEntry == null
@@ -44,17 +38,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(AppRoutes.HOME) {
-                        HomeScreen(
-                            onLogout = {
-                                scope.launch {
-                                    sessionVm.logout()
-                                    nav.navigate(AppRoutes.AUTH) {
-                                        popUpTo(nav.graph.id) { inclusive = true }
-                                        launchSingleTop = true
-                                    }
-                                }
-                            }
-                        )
+                        HomeScreen(nav)
                     }
 
                     composable(route = AppRoutes.AUTH) {

@@ -15,26 +15,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import edu.kinoko.kidsbankingandroid.data.enums.ModalType
-import edu.kinoko.kidsbankingandroid.ui.components.Header
-import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.theme.ButtonRed
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.ui.home.component.AccountCart
+import edu.kinoko.kidsbankingandroid.ui.home.component.Operation
+import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
+import edu.kinoko.kidsbankingandroid.ui.splash.SessionViewModel
+import edu.kinoko.kidsbankingandroid.ui.theme.ButtonGreen
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
-    onLogout: () -> Unit
+    nav: NavHostController
 ) {
     val scope = rememberCoroutineScope()
-    var isBusy by remember { mutableStateOf(false) }
+    val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
@@ -44,57 +43,82 @@ fun HomeScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Header("Здесь будет главная страница")
-            }
-            Spacer(Modifier.size(10.dp))
-            Button(
-                onClick = {
-                    if (!isBusy) {
-                        isBusy = true
+                ProfileButton(
+                    name = "Иван",
+                    onClick = {
                         scope.launch {
-                            onLogout()
-                            isBusy = false
+                            sessionVm.logout()
+                            nav.navigate(AppRoutes.AUTH) {
+                                popUpTo(nav.graph.id) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = ButtonRed),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                shape = RoundedCornerShape(16.dp),
-                enabled = !isBusy
-            ) {
-                Text("Выйти")
+                )
+                AccountCart(
+                    cartName = "Счёт родителя",
+                    moneyQuantity = "1 084"
+                )
+                Spacer(Modifier.size(10.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        "История операций ребенка",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Operation(
+                        name = "Магнит",
+                        currency = "112",
+                        type = "Покупка в магазине"
+                    )
+                    Operation(
+                        name = "Магнит",
+                        currency = "112",
+                        type = "Покупка в магазине"
+                    )
+                    Operation(
+                        name = "Магнит",
+                        currency = "112",
+                        type = "Покупка в магазине"
+                    )
+                    Operation(
+                        name = "Магнит",
+                        currency = "112",
+                        type = "Покупка в магазине"
+                    )
+                    Operation(
+                        name = "Магнит",
+                        currency = "112",
+                        type = "Покупка в магазине"
+                    )
+                }
             }
-            Spacer(Modifier.size(50.dp))
             Column(
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Modal(
-                    text = "Тест модалки с состоянием: INFO",
-                    modalType = ModalType.INFO
-                )
-                Modal(
-                    text = "Тест модалки с состоянием: SUCCESSFUL",
-                    modalType = ModalType.SUCCESSFUL
-                )
-                Modal(
-                    text = "Тест модалки с состоянием: WARN",
-                    modalType = ModalType.WARN
-                )
-                Modal(
-                    text = "Тест модалки с состоянием: ERROR",
-                    modalType = ModalType.ERROR
-                )
-                Spacer(Modifier.size(50.dp))
-                Modal(
-                    text = "Тест отображения длинного текста внутри модалки на случай если с сервера придет длинный ответ",
-                    modalType = ModalType.INFO
-                )
+                Button(
+                    onClick = {  },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("Перейти к счету ребенка")
+                }
+                Button(
+                    onClick = {  },
+                    colors = ButtonDefaults.buttonColors(containerColor = ButtonGreen),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("Получить зарплату")
+                }
             }
         }
     }
