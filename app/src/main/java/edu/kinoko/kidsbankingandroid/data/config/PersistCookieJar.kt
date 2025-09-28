@@ -12,13 +12,13 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class PersistCookieJar(private val context: Context) : CookieJar {
-    // простая мапа домен -> cookies
-    private val memory = mutableMapOf<String, MutableList<Cookie>>()
+    private val memory = mutableMapOf<String, MutableList<Cookie>>() // ключ: host
     private var restored = false
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         if (cookies.isEmpty()) return
-        val list = memory.getOrPut(url.topPrivateDomainOrHost()) { mutableListOf() }
+        val hostKey = url.host // НЕ topPrivateDomain: host-only кука должна жить на точном хосте
+        val list = memory.getOrPut(hostKey) { mutableListOf() }
         cookies.forEach { c ->
             list.removeAll { it.name == c.name && it.matches(url) }
             list += c
@@ -28,33 +28,44 @@ class PersistCookieJar(private val context: Context) : CookieJar {
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
         if (!restored) restore()
-        return memory
-            .filterKeys { domain -> url.host.endsWith(domain) }
-            .values.flatten()
+        // Берём все куки из памяти и фильтруем стандартной логикой OkHttp
+        return memory.values
+            .asSequence()
+            .flatten()
             .filter { it.matches(url) }
+            .toList()
     }
 
     private fun persist() = runBlocking {
-        val all = memory.values.flatten().joinToString(";;") { it.toString() }
+        // Сохраняем ВМЕСТЕ с хостом, таб-разделитель
+        val all = buildString {
+            memory.forEach { (host, list) ->
+                list.forEach { c -> append(host).append('\t').append(c.toString()).append('\n') }
+            }
+        }
         context.cookieDataStore.edit { it[KEY] = all }
     }
 
     private fun restore() = runBlocking {
-        val s = context.cookieDataStore.data.first()[KEY].orEmpty()
-        if (s.isNotBlank()) {
-            val list = s.split(";;")
-                .mapNotNull {
-                    Cookie.parse("https://dummy".toHttpUrl(), it)
+        val raw = context.cookieDataStore.data.first()[KEY].orEmpty()
+        memory.clear()
+        if (raw.isNotBlank()) {
+            val now = System.currentTimeMillis()
+            raw.lineSequence()
+                .filter { it.isNotBlank() && it.contains('\t') }
+                .mapNotNull { line ->
+                    val i = line.indexOf('\t')
+                    val host = line.substring(0, i)
+                    val cookieStr = line.substring(i + 1)
+                    val url = ("https://$host").toHttpUrl()
+                    Cookie.parse(url, cookieStr)?.takeIf { it.expiresAt >= now }
+                        ?.let { host to it }
                 }
-            memory.clear()
-            list.groupBy { it.domain }.forEach { (domain, cs) ->
-                memory[domain] = cs.toMutableList()
-            }
+                .groupBy({ it.first }, { it.second })
+                .forEach { (host, cs) -> memory[host] = cs.toMutableList() }
         }
         restored = true
     }
-
-    private fun HttpUrl.topPrivateDomainOrHost(): String = this.topPrivateDomain() ?: host
 
     companion object {
         private const val DS_NAME = "cookie_store"
@@ -62,3 +73,4 @@ class PersistCookieJar(private val context: Context) : CookieJar {
         val Context.cookieDataStore by preferencesDataStore(name = DS_NAME)
     }
 }
+

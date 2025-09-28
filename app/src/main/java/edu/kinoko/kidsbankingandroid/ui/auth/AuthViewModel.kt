@@ -4,15 +4,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import edu.kinoko.kidsbankingandroid.api.request.AuthenticationRequest
+import edu.kinoko.kidsbankingandroid.api.request.RegistrationRequest
+import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
-import edu.kinoko.kidsbankingandroid.api.request.AuthenticationRequest
-import edu.kinoko.kidsbankingandroid.api.request.RegistrationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -65,7 +67,7 @@ class AuthViewModel(
             LocalDate.parse(
                 values[AuthFieldNames.BIRTH_DATE].orEmpty()
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             _ui.value = AuthUiState.Error("Дата введена не в верном формате (YYYY-MM-DD)")
             return
         }
@@ -76,9 +78,7 @@ class AuthViewModel(
             lastname = values[AuthFieldNames.SURNAME].orEmpty(),
             name = values[AuthFieldNames.NAME].orEmpty(),
             fatherName = values[AuthFieldNames.PATRONYMIC].orEmpty(),
-            birthDate = LocalDate.parse(
-                values[AuthFieldNames.BIRTH_DATE].orEmpty()
-            ),
+            birthDate = birthDate,
             city = values[AuthFieldNames.CITY].orEmpty()
         )
 
@@ -100,7 +100,16 @@ class AuthViewModel(
     private fun Exception.humanMessage(): String {
         Log.e("AuthViewModel", this.stackTraceToString())
         return when (this) {
-            is HttpException -> "Сервер ${code()}: ${response()?.errorBody()?.string()}"
+            is HttpException -> {
+                val responseDto = Json.decodeFromString<ErrorResponse>(
+                    response()
+                        ?.errorBody()
+                        ?.string()
+                        ?: "{\"error\":\"Неизвестная ошибка\"}"
+                )
+
+                "Сервер: ${code()}: ${responseDto.error}"
+            }
             is IOException -> "Проблема с сетью"
             else -> message ?: "Неизвестная ошибка"
         }

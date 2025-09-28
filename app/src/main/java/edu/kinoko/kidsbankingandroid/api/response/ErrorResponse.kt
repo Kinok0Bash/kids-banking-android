@@ -1,5 +1,8 @@
 package edu.kinoko.kidsbankingandroid.api.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ErrorResponse(
     val error: String,
 )
