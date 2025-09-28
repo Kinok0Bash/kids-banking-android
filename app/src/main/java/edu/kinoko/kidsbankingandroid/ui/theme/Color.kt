@@ -2,21 +2,26 @@ package edu.kinoko.kidsbankingandroid.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
-val ButtonRed = Color(0xFFA60000)
-val ButtonGreen = Color(0xFF00A200)
-
-val NewStatusColor = Color(0xFFFFE41D)
-val InProgressStatusColor = Color(0xFF4D4DFF)
-val CompletedStatusColor = Color(0xFF00BE00)
-val RejectedStatusColor = Color(0xFFE10000)
-
-
 val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
+
+val LilGray = Color(0xFF232323)
+
+
+val Primary = Color(0xFF2E2F34)
+val Secondary = Color(0xFFEEEFF2)
+
+val ButtonRed = Color(0xFFA60007)
+
+// Modal colors
+val InfoBackground = Secondary
+val InfoIcon = Primary
+
+val WarnBackground = Color(0xFFFFF9B2)
+val WarnIcon = Color(0xFFBDA500)
+
+val ErrorBackground = Color(0xFFFF8989)
+val ErrorIcon = Color(0xFFC20101)
+
+val SuccessBackground = Color(0xFF89FFB0)
+val SuccessIcon = Color(0xFF419F45)
