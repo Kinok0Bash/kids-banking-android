@@ -13,6 +13,7 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
+import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
 import edu.kinoko.kidsbankingandroid.ui.theme.KidsBankingAndroidTheme
 
@@ -33,11 +34,11 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = nav, startDestination = AppRoutes.SPLASH) {
 
-                    composable(AppRoutes.SPLASH) {
+                    composable(route = AppRoutes.SPLASH) {
                         SplashScreen(nav)
                     }
 
-                    composable(AppRoutes.HOME) {
+                    composable(route = AppRoutes.HOME) {
                         HomeScreen(nav)
                     }
 
@@ -63,6 +64,10 @@ class MainActivity : ComponentActivity() {
                             },
                             auth = { nav.navigate(AppRoutes.AUTH) },
                         )
+                    }
+
+                    composable(route = AppRoutes.PROFILE) {
+                        ProfileScreen(nav)
                     }
                 }
             }

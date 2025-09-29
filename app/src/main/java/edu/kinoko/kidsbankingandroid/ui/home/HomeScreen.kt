@@ -30,7 +30,6 @@ import edu.kinoko.kidsbankingandroid.ui.home.component.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.home.component.HistoryBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ParentButtonBlock
-import edu.kinoko.kidsbankingandroid.ui.splash.SessionViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,7 +37,6 @@ fun HomeScreen(
     nav: NavHostController
 ) {
     val scope = rememberCoroutineScope()
-    val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
     val homeScreenVm: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.factory())
     val uiState by homeScreenVm.ui.collectAsStateWithLifecycle()
 
@@ -60,11 +58,7 @@ fun HomeScreen(
                         name = UserStore.userData.name,
                         onClick = {
                             scope.launch {
-                                sessionVm.logout()
-                                nav.navigate(AppRoutes.AUTH) {
-                                    popUpTo(nav.graph.id) { inclusive = true }
-                                    launchSingleTop = true
-                                }
+                                nav.navigate(route = AppRoutes.PROFILE)
                             }
                         }
                     )

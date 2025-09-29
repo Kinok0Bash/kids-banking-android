@@ -5,4 +5,5 @@ object AppRoutes {
     const val HOME = "home"
     const val AUTH = "auth"
     const val REGISTRATION = "registration"
+    const val PROFILE = "profile"
 }
