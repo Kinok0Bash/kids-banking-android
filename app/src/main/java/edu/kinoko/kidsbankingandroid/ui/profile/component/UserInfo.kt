@@ -43,6 +43,12 @@ fun UserInfo() {
             "Город",
             UserStore.userData.city
         )
+        if (UserStore.userData.role == Role.PARENT && UserStore.userData.childName != null) {
+            UserInfoRow(
+                "Имя ребенка",
+                UserStore.userData.childName ?: "ОШИБКА"
+            )
+        }
         UserInfoRow(
             "Тип аккаунта",
             when (UserStore.userData.role) {

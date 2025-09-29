@@ -18,5 +18,6 @@ data class User(
     val birthDate: LocalDate,
     val city: String,
     val role: Role,
+    val childName: String?,
     val isGetKid: Boolean,
 )
