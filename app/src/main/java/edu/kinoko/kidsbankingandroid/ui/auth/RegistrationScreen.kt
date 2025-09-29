@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.dto.FieldConfig
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
@@ -45,8 +46,7 @@ fun RegistrationScreen(
     home: () -> Unit,
     auth: () -> Unit,
 ) {
-    val vm: AuthViewModel =
-        androidx.lifecycle.viewmodel.compose.viewModel(factory = AuthViewModel.factory())
+    val vm: AuthViewModel = viewModel(factory = AuthViewModel.factory())
     val uiState by vm.ui.collectAsStateWithLifecycle()
 
     var step by remember { mutableIntStateOf(1) }
