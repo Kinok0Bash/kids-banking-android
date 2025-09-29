@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,6 @@ import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePassword
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePasswordRepeat
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.theme.Secondary
 
 @Composable
 fun RegistrationScreen(
@@ -125,7 +126,15 @@ fun RegistrationScreen(
                                 640.dp
                             }
                         )
-                        .background(color = Secondary, shape = RoundedCornerShape(16.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFEBD8FF),
+                                    Color(0x00FFFFFF)
+                                ),
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        )
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
