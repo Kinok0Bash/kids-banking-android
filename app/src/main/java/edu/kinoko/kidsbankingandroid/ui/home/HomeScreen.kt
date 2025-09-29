@@ -84,11 +84,7 @@ fun HomeScreen(
                         }
                     }
                     Spacer(Modifier.size(10.dp))
-                    if (UserStore.userData.role == Role.CHILD ||
-                        (UserStore.userData.role == Role.PARENT && UserStore.userData.isGetKid)
-                    ) {
-                        HistoryBlock()
-                    }
+                    HistoryBlock()
                 }
                 when {
                     UserStore.userData.role == Role.PARENT -> ParentButtonBlock(
