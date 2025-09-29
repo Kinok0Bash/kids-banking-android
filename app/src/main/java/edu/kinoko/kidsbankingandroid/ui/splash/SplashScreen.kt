@@ -19,10 +19,11 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 
 @Composable
 fun SplashScreen(nav: NavHostController) {
-    val vm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
-    val state by vm.state.collectAsStateWithLifecycle()
+    val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
 
-    LaunchedEffect(Unit) { vm.bootstrap() }
+    val state by sessionVm.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) { sessionVm.bootstrap() }
 
     LaunchedEffect(state) {
         when (state) {
@@ -30,10 +31,12 @@ fun SplashScreen(nav: NavHostController) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }
+
             SessionState.Guest -> nav.navigate(AppRoutes.AUTH) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }
+
             SessionState.Checking -> Unit
         }
     }

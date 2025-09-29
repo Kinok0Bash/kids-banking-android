@@ -1,10 +1,8 @@
 package edu.kinoko.kidsbankingandroid.data.store
 
+import android.security.keystore.UserNotAuthenticatedException
 import android.util.Log
 import edu.kinoko.kidsbankingandroid.data.dto.User
-import edu.kinoko.kidsbankingandroid.data.enums.Role
-import kotlinx.datetime.LocalDate
-import java.util.UUID
 
 object UserStore {
     private var _userData: User? = null
@@ -15,17 +13,8 @@ object UserStore {
                 Log.e("UserStore", "Информация о пользователе отсутствует")
             }
 
-            return _userData ?: User(
-                id = UUID.randomUUID(),
-                fullName = "ОШИБКА",
-                lastname = "ОШИБКА",
-                name = "ОШИБКА",
-                fatherName = "ОШИБКА",
-                username = "ОШИБКА",
-                birthDate = LocalDate.parse("2000-01-01"),
-                city = "ОШИБКА",
-                role = Role.PARENT,
-                isGetKid = false
+            return _userData ?: throw UserNotAuthenticatedException(
+                "Пользователь не авторизован"
             )
         }
         set(value) {
