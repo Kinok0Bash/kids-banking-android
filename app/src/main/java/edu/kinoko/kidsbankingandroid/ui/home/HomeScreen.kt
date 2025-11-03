@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
@@ -26,7 +27,7 @@ import edu.kinoko.kidsbankingandroid.data.store.BalanceStore
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.data.util.grouped
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.home.component.AccountCart
+import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.home.component.HistoryBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ParentButtonBlock
@@ -82,6 +83,12 @@ fun HomeScreen(
                 }
                 when {
                     UserStore.userData.role == Role.PARENT -> ParentButtonBlock(
+                        toKidAccount = {
+                            nav.navigate(AppRoutes.CHILD_ACCOUNT) {
+                                popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        },
                         getSalary = { homeScreenVm.getSalary() }
                     )
                 }

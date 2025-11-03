@@ -10,7 +10,7 @@ import edu.kinoko.kidsbankingandroid.ui.theme.ButtonGreen
 
 @Composable
 fun ParentButtonBlock(
-    toKidAccount: () -> Unit = {  },
+    toKidAccount: () -> Unit,
     getSalary: () -> Unit,
 ) {
     Column(

@@ -26,3 +26,5 @@ val ErrorIcon = Color(0xFFC20101)
 
 val SuccessBackground = Color(0xFF89FFB0)
 val SuccessIcon = Color(0xFF419F45)
+
+val AlfaColor = Color(0x00000000)

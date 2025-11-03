@@ -8,7 +8,6 @@ import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.store.GlobalErrorStore
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
-import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +20,7 @@ import java.net.UnknownHostException
 sealed interface SessionState {
     data object Checking : SessionState
     data object Authed : SessionState
-    data object Guest : SessionState
+    data object Unauthorized : SessionState
     data object NetworkError : SessionState
 }
 
@@ -51,8 +50,8 @@ class SessionViewModel(
                         SessionState.NetworkError
                     }
 
-                    t.isAuthProblem() -> SessionState.Guest
-                    else -> SessionState.Guest
+                    t.isAuthProblem() -> SessionState.Unauthorized
+                    else -> SessionState.Unauthorized
                 }
             }
         }
@@ -61,7 +60,7 @@ class SessionViewModel(
     fun logout() {
         viewModelScope.launch {
             runCatching { auth.logout() }
-            _state.value = SessionState.Guest
+            _state.value = SessionState.Unauthorized
         }
     }
 

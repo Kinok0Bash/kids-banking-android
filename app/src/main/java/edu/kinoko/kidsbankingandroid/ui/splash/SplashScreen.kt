@@ -27,13 +27,13 @@ fun SplashScreen(nav: NavHostController) {
 
     LaunchedEffect(state) {
         when (state) {
-            SessionState.Authed -> nav.navigate(AppRoutes.HOME) {
-//            SessionState.Authed -> nav.navigate(AppRoutes.PROFILE) {
+//            SessionState.Authed -> nav.navigate(AppRoutes.HOME) {
+            SessionState.Authed -> nav.navigate(AppRoutes.CHILD_ACCOUNT) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }
 
-            SessionState.Guest -> nav.navigate(AppRoutes.AUTH) {
+            SessionState.Unauthorized -> nav.navigate(AppRoutes.AUTH) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }

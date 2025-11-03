@@ -14,6 +14,7 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
+import edu.kinoko.kidsbankingandroid.ui.childaccount.ChildAccountScreen
 import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
 import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
@@ -76,6 +77,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = AppRoutes.PROFILE) {
                         ProfileScreen(nav)
+                    }
+
+                    composable(route = AppRoutes.CHILD_ACCOUNT) {
+                        ChildAccountScreen(nav)
                     }
                 }
             }
