@@ -28,9 +28,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.dto.FieldConfig
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
+import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.ui.auth.components.AuthButtonsBlock
 import edu.kinoko.kidsbankingandroid.ui.auth.components.DynamicForm
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validateBirthDateRaw
@@ -43,8 +46,8 @@ import edu.kinoko.kidsbankingandroid.ui.components.Modal
 
 @Composable
 fun RegistrationScreen(
-    home: () -> Unit,
-    auth: () -> Unit,
+    nav: NavHostController,
+    regType: Role
 ) {
     val vm: AuthViewModel = viewModel(factory = AuthViewModel.factory())
     val uiState by vm.ui.collectAsStateWithLifecycle()
@@ -59,7 +62,7 @@ fun RegistrationScreen(
     val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) home()
+        if (uiState is AuthUiState.Success) home(nav)
     }
 
     val authFields = listOf(
@@ -200,7 +203,7 @@ fun RegistrationScreen(
                                 }
                             },
                             textButtonText = "Есть аккаунт? Войти",
-                            textButtonAction = auth
+                            textButtonAction = { auth(nav) }
                         )
                     } else {
                         val loading = uiState is AuthUiState.Loading
@@ -214,7 +217,7 @@ fun RegistrationScreen(
                                 showAll = true
                                 errors = validateAll(formValues)
                                 if (!errors.values.any { it != null } && !loading) vm.register(
-                                    formValues
+                                    formValues, regType
                                 )
                             },
                             textButtonText = "Назад",
@@ -241,5 +244,16 @@ fun RegistrationScreen(
                 )
             }
         }
+    }
+}
+
+private fun auth(nav: NavHostController) {
+    nav.navigate(AppRoutes.AUTH)
+}
+
+private fun home(nav: NavHostController) {
+    nav.navigate(AppRoutes.HOME) {
+        popUpTo(nav.graph.id) { inclusive = true }
+        launchSingleTop = true
     }
 }

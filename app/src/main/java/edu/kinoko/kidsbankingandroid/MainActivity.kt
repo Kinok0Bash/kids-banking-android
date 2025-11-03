@@ -5,13 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
+import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
 import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
@@ -38,31 +41,36 @@ class MainActivity : ComponentActivity() {
                         SplashScreen(nav)
                     }
 
+                    composable(route = AppRoutes.GLOBAL_ERROR) {
+                        GlobalError(
+                            retry = {
+                                nav.navigate(AppRoutes.SPLASH) {
+                                    popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            }
+                        )
+                    }
+
                     composable(route = AppRoutes.HOME) {
                         HomeScreen(nav)
                     }
 
                     composable(route = AppRoutes.AUTH) {
-                        AuthScreen(
-                            home = {
-                                nav.navigate(AppRoutes.HOME) {
-                                    popUpTo(nav.graph.id) { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            },
-                            registration = { nav.navigate(AppRoutes.REGISTRATION) }
-                        )
+                        AuthScreen(nav)
                     }
 
                     composable(route = AppRoutes.REGISTRATION) {
                         RegistrationScreen(
-                            home = {
-                                nav.navigate(AppRoutes.HOME) {
-                                    popUpTo(nav.graph.id) { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            },
-                            auth = { nav.navigate(AppRoutes.AUTH) },
+                            nav = nav,
+                            regType = Role.PARENT
+                        )
+                    }
+
+                    composable(route = AppRoutes.NEW_CHILD) {
+                        RegistrationScreen(
+                            nav = nav,
+                            regType = Role.CHILD
                         )
                     }
 

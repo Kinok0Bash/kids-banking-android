@@ -11,6 +11,8 @@ import edu.kinoko.kidsbankingandroid.data.service.ParentService
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.service.TransactionService
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -34,6 +36,22 @@ class HomeScreenViewModel(
     private val _ui = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Idle)
     val ui: StateFlow<HomeScreenUiState> = _ui
 
+    private var errorJob: Job? = null
+
+    private fun showError(msg: String) {
+        _ui.value = HomeScreenUiState.Error(msg)
+        errorJob?.cancel()
+        errorJob = viewModelScope.launch {
+            delay(3000)
+            // чтобы не затереть новую ошибку, проверим что всё ещё та же
+            if (_ui.value is HomeScreenUiState.Error &&
+                (_ui.value as HomeScreenUiState.Error).message == msg
+            ) {
+                _ui.value = HomeScreenUiState.Idle
+            }
+        }
+    }
+
     fun bootstrap() {
         _ui.value = HomeScreenUiState.Loading
         viewModelScope.launch {
@@ -52,7 +70,7 @@ class HomeScreenViewModel(
                 }
                 _ui.value = HomeScreenUiState.Success
             } catch (ex: Exception) {
-                _ui.value = HomeScreenUiState.Error(ex.humanMessage())
+                showError(ex.humanMessage())
             }
         }
     }
@@ -65,7 +83,7 @@ class HomeScreenViewModel(
                 balanceService.getParentBalance()
                 _ui.value = HomeScreenUiState.Success
             } catch (ex: Exception) {
-                _ui.value = HomeScreenUiState.Error(ex.humanMessage())
+                showError(ex.humanMessage())
             }
         }
     }

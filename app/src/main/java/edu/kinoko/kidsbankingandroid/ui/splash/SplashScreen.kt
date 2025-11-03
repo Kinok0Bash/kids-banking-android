@@ -38,6 +38,11 @@ fun SplashScreen(nav: NavHostController) {
                 launchSingleTop = true
             }
 
+            SessionState.NetworkError -> nav.navigate(AppRoutes.GLOBAL_ERROR) {
+                popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                launchSingleTop = true
+            }
+
             SessionState.Checking -> Unit
         }
     }
