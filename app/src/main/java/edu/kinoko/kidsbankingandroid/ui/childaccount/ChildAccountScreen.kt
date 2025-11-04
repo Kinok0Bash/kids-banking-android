@@ -26,7 +26,7 @@ import edu.kinoko.kidsbankingandroid.ui.childaccount.component.ChildAccountButto
 import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.components.BackHeader
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.home.HomeScreenUiState
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun ChildAccountScreen(
@@ -68,14 +68,14 @@ fun ChildAccountScreen(
             }
         }
 
-        if (uiState is ChildAccountUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as ChildAccountUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }

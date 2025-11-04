@@ -31,6 +31,7 @@ import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.home.component.HistoryBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ParentButtonBlock
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -95,14 +96,14 @@ fun HomeScreen(
             }
         }
 
-        if (uiState is HomeScreenUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as HomeScreenUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }

@@ -14,6 +14,7 @@ import edu.kinoko.kidsbankingandroid.data.service.ParentService
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.parseRawDdMmYyyy
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,33 +24,26 @@ import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface AuthUiState {
-    data object Idle : AuthUiState
-    data object Loading : AuthUiState
-    data class Error(val message: String) : AuthUiState
-    data object Success : AuthUiState
-}
-
 class AuthViewModel(
     private val authService: AuthService,
     private val parentService: ParentService,
 ) : ViewModel() {
 
-    private val _ui = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
-    val ui: StateFlow<AuthUiState> = _ui
+    private val _ui = MutableStateFlow<UiState>(UiState.Idle)
+    val ui: StateFlow<UiState> = _ui
 
     private var errorJob: Job? = null
 
     private fun showError(msg: String) {
-        _ui.value = AuthUiState.Error(msg)
+        _ui.value = UiState.Error(msg)
         errorJob?.cancel()
         errorJob = viewModelScope.launch {
             delay(3000)
             // чтобы не затереть новую ошибку, проверим что всё ещё та же
-            if (_ui.value is AuthUiState.Error &&
-                (_ui.value as AuthUiState.Error).message == msg
+            if (_ui.value is UiState.Error &&
+                (_ui.value as UiState.Error).message == msg
             ) {
-                _ui.value = AuthUiState.Idle
+                _ui.value = UiState.Idle
             }
         }
     }
@@ -61,7 +55,7 @@ class AuthViewModel(
             showError("Заполни логин и пароль")
             return
         }
-        _ui.value = AuthUiState.Loading
+        _ui.value = UiState.Loading
         viewModelScope.launch {
             try {
                 val response = authService.login(
@@ -71,7 +65,7 @@ class AuthViewModel(
                     )
                 )
                 UserStore.userData = response.user
-                _ui.value = AuthUiState.Success
+                _ui.value = UiState.Success
             } catch (e: Exception) {
                 showError(e.humanMessage())
             }
@@ -107,7 +101,7 @@ class AuthViewModel(
             city = values[AuthFieldNames.CITY].orEmpty()
         )
 
-        _ui.value = AuthUiState.Loading
+        _ui.value = UiState.Loading
         viewModelScope.launch {
             try {
                 when (regType) {
@@ -119,15 +113,15 @@ class AuthViewModel(
                         parentService.createChildAccount(request)
                     }
                 }
-                _ui.value = AuthUiState.Success
+                _ui.value = UiState.Success
             } catch (e: Exception) {
-                _ui.value = AuthUiState.Error(e.humanMessage())
+                _ui.value = UiState.Error(e.humanMessage())
             }
         }
     }
 
     fun resetError() {
-        if (_ui.value is AuthUiState.Error) _ui.value = AuthUiState.Idle
+        if (_ui.value is UiState.Error) _ui.value = UiState.Idle
     }
 
     private fun Exception.humanMessage(): String {

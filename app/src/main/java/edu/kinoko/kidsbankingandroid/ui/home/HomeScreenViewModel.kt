@@ -11,6 +11,7 @@ import edu.kinoko.kidsbankingandroid.data.service.ParentService
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.service.TransactionService
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,40 +21,33 @@ import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface HomeScreenUiState {
-    data object Idle : HomeScreenUiState
-    data object Loading : HomeScreenUiState
-    data class Error(val message: String) : HomeScreenUiState
-    data object Success : HomeScreenUiState
-}
-
 class HomeScreenViewModel(
     private val balanceService: BalanceService,
     private val transactionService: TransactionService,
     private val parentService: ParentService,
 ) : ViewModel() {
 
-    private val _ui = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Idle)
-    val ui: StateFlow<HomeScreenUiState> = _ui
+    private val _ui = MutableStateFlow<UiState>(UiState.Idle)
+    val ui: StateFlow<UiState> = _ui
 
     private var errorJob: Job? = null
 
     private fun showError(msg: String) {
-        _ui.value = HomeScreenUiState.Error(msg)
+        _ui.value = UiState.Error(msg)
         errorJob?.cancel()
         errorJob = viewModelScope.launch {
             delay(3000)
             // чтобы не затереть новую ошибку, проверим что всё ещё та же
-            if (_ui.value is HomeScreenUiState.Error &&
-                (_ui.value as HomeScreenUiState.Error).message == msg
+            if (_ui.value is UiState.Error &&
+                (_ui.value as UiState.Error).message == msg
             ) {
-                _ui.value = HomeScreenUiState.Idle
+                _ui.value = UiState.Idle
             }
         }
     }
 
     fun bootstrap() {
-        _ui.value = HomeScreenUiState.Loading
+        _ui.value = UiState.Loading
         viewModelScope.launch {
             try {
                 when (UserStore.userData.role) {
@@ -68,7 +62,7 @@ class HomeScreenViewModel(
                 if (UserStore.userData.isGetKid) {
                     transactionService.getLastTransactions()
                 }
-                _ui.value = HomeScreenUiState.Success
+                _ui.value = UiState.Success
             } catch (ex: Exception) {
                 showError(ex.humanMessage())
             }
@@ -76,12 +70,12 @@ class HomeScreenViewModel(
     }
 
     fun getSalary() {
-        _ui.value = HomeScreenUiState.Loading
+        _ui.value = UiState.Loading
         viewModelScope.launch {
             try {
                 parentService.getSalary()
                 balanceService.getParentBalance()
-                _ui.value = HomeScreenUiState.Success
+                _ui.value = UiState.Success
             } catch (ex: Exception) {
                 showError(ex.humanMessage())
             }

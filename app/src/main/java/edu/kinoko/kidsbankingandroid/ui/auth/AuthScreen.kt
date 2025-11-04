@@ -38,6 +38,7 @@ import edu.kinoko.kidsbankingandroid.ui.auth.utils.validateLogin
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePassword
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun AuthScreen(
@@ -65,7 +66,7 @@ fun AuthScreen(
     )
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) home(nav)
+        if (uiState is UiState.Success) home(nav)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -121,7 +122,7 @@ fun AuthScreen(
 
                     Spacer(Modifier.size(16.dp))
 
-                    val loading = uiState is AuthUiState.Loading
+                    val loading = uiState is UiState.Loading
                     AuthButtonsBlock(
                         buttonText = if (loading) {
                             "Входим..."
@@ -142,14 +143,14 @@ fun AuthScreen(
             }
         }
 
-        if (uiState is AuthUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as AuthUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }

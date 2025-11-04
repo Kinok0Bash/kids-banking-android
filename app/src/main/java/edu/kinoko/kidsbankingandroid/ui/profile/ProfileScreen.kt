@@ -28,6 +28,7 @@ import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.profile.component.UserInfo
 import edu.kinoko.kidsbankingandroid.ui.splash.SessionViewModel
 import edu.kinoko.kidsbankingandroid.ui.theme.ButtonRed
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun ProfileScreen(
@@ -100,14 +101,14 @@ fun ProfileScreen(
                 }
             }
         }
-        if (uiState is ProfileUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as ProfileUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }

@@ -8,6 +8,7 @@ import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
 import edu.kinoko.kidsbankingandroid.data.service.AuthService
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,42 +18,35 @@ import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface ProfileUiState {
-    data object Idle : ProfileUiState
-    data object Loading : ProfileUiState
-    data class Error(val message: String) : ProfileUiState
-    data object Success : ProfileUiState
-}
-
 class ProfileViewModel(
     private val authService: AuthService
 ) : ViewModel() {
-    private val _ui = MutableStateFlow<ProfileUiState>(ProfileUiState.Idle)
-    val ui: StateFlow<ProfileUiState> = _ui
+    private val _ui = MutableStateFlow<UiState>(UiState.Idle)
+    val ui: StateFlow<UiState> = _ui
 
     private var errorJob: Job? = null
 
     private fun showError(msg: String) {
-        _ui.value = ProfileUiState.Error(msg)
+        _ui.value = UiState.Error(msg)
         errorJob?.cancel()
         errorJob = viewModelScope.launch {
             delay(3000)
             // чтобы не затереть новую ошибку, проверим что всё ещё та же
-            if (_ui.value is ProfileUiState.Error &&
-                (_ui.value as ProfileUiState.Error).message == msg
+            if (_ui.value is UiState.Error &&
+                (_ui.value as UiState.Error).message == msg
             ) {
-                _ui.value = ProfileUiState.Idle
+                _ui.value = UiState.Idle
             }
         }
     }
     
     fun getProfileInfo() {
-        _ui.value = ProfileUiState.Loading
+        _ui.value = UiState.Loading
 
         viewModelScope.launch {
             try {
                 UserStore.userData = authService.whoAmI()
-                _ui.value = ProfileUiState.Success
+                _ui.value = UiState.Success
             } catch (e: Exception) {
                 showError(e.humanMessage())
             }

@@ -43,6 +43,7 @@ import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePassword
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePasswordRepeat
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun RegistrationScreen(
@@ -62,7 +63,7 @@ fun RegistrationScreen(
     val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) home(nav)
+        if (uiState is UiState.Success) home(nav)
     }
 
     val authFields = listOf(
@@ -206,7 +207,7 @@ fun RegistrationScreen(
                             textButtonAction = { auth(nav) }
                         )
                     } else {
-                        val loading = uiState is AuthUiState.Loading
+                        val loading = uiState is UiState.Loading
                         AuthButtonsBlock(
                             buttonText = if (loading) {
                                 "Регистрируем..."
@@ -232,14 +233,14 @@ fun RegistrationScreen(
             }
         }
 
-        if (uiState is AuthUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as AuthUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }

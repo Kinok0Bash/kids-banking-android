@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
 import edu.kinoko.kidsbankingandroid.data.service.BalanceService
 import edu.kinoko.kidsbankingandroid.data.service.Services
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,42 +17,35 @@ import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface ChildAccountUiState {
-    data object Idle : ChildAccountUiState
-    data object Loading : ChildAccountUiState
-    data class Error(val message: String) : ChildAccountUiState
-    data object Success : ChildAccountUiState
-}
-
 class ChildAccountViewModel(
     private val balanceService: BalanceService,
 ) : ViewModel() {
 
-    private val _ui = MutableStateFlow<ChildAccountUiState>(ChildAccountUiState.Idle)
-    val ui: StateFlow<ChildAccountUiState> = _ui
+    private val _ui = MutableStateFlow<UiState>(UiState.Idle)
+    val ui: StateFlow<UiState> = _ui
 
     private var errorJob: Job? = null
 
     private fun showError(msg: String) {
-        _ui.value = ChildAccountUiState.Error(msg)
+        _ui.value = UiState.Error(msg)
         errorJob?.cancel()
         errorJob = viewModelScope.launch {
             delay(3000)
             // чтобы не затереть новую ошибку, проверим что всё ещё та же
-            if (_ui.value is ChildAccountUiState.Error &&
-                (_ui.value as ChildAccountUiState.Error).message == msg
+            if (_ui.value is UiState.Error &&
+                (_ui.value as UiState.Error).message == msg
             ) {
-                _ui.value = ChildAccountUiState.Idle
+                _ui.value = UiState.Idle
             }
         }
     }
 
     fun bootstrap() {
-        _ui.value = ChildAccountUiState.Loading
+        _ui.value = UiState.Loading
         viewModelScope.launch {
             try {
                 balanceService.getParentBalance()
-                _ui.value = ChildAccountUiState.Success
+                _ui.value = UiState.Success
             } catch (ex: Exception) {
                 showError(ex.humanMessage())
             }
