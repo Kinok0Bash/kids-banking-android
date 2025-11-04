@@ -14,6 +14,8 @@ val Secondary = Color(0xFFEEEFF2)
 val ButtonRed = Color(0xFFA60007)
 val ButtonGreen = Color(0xFF1B9F00)
 
+val TransactionGreen = Color(0xFF1B9F00)
+
 // Modal colors
 val InfoBackground = Secondary
 val InfoIcon = Primary

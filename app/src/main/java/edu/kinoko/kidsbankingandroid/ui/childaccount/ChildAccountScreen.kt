@@ -3,10 +3,8 @@ package edu.kinoko.kidsbankingandroid.ui.childaccount
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -48,7 +46,9 @@ fun ChildAccountScreen(
                     .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                Column {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     BackHeader(
                         text = "Финансовый профиль ребенка",
                         onClick = {
@@ -58,13 +58,12 @@ fun ChildAccountScreen(
                             }
                         }
                     )
-                    Spacer(Modifier.size(12.dp))
                     AccountCart(
                         cartName = "Счёт ребёнка",
                         moneyQuantity = BalanceStore.childBalance.grouped()
                     )
                 }
-                ChildAccountButtonBlock()
+                ChildAccountButtonBlock(nav)
             }
         }
 

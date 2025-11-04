@@ -17,6 +17,7 @@ import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
 import edu.kinoko.kidsbankingandroid.ui.childaccount.ChildAccountScreen
 import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
+import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingScreen
 import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
 import edu.kinoko.kidsbankingandroid.ui.theme.KidsBankingAndroidTheme
@@ -81,6 +82,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = AppRoutes.CHILD_ACCOUNT) {
                         ChildAccountScreen(nav)
+                    }
+
+                    composable(route = AppRoutes.MONEY_SENDING) {
+                        MoneySendingScreen(nav)
                     }
                 }
             }

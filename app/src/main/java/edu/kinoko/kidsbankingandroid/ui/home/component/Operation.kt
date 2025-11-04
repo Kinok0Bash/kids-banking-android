@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.kinoko.kidsbankingandroid.ui.theme.Black
+import edu.kinoko.kidsbankingandroid.ui.theme.TransactionGreen
 
 @Composable
 fun Operation(
@@ -43,11 +45,17 @@ fun Operation(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val (textColor, text) = if (type == "Входящий") {
+                    TransactionGreen to "+ $currency"
+                } else {
+                    Black to "- $currency"
+                }
                 Text(
-                    "- $currency",
+                    text,
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
+                        color = textColor
                     )
                 )
                 Icon(
@@ -55,7 +63,8 @@ fun Operation(
                     contentDescription = "Валюта",
                     modifier = Modifier
                         .padding(top = 5.dp)
-                        .size(14.dp)
+                        .size(14.dp),
+                    tint = textColor
                 )
             }
         }

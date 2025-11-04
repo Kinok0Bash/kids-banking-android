@@ -59,7 +59,10 @@ class HomeScreenViewModel(
                         balanceService.getChildBalance()
                     }
                 }
-                if (UserStore.userData.isGetKid) {
+                if (
+                    (UserStore.userData.role == Role.PARENT && UserStore.userData.isGetKid)
+                    || UserStore.userData.role == Role.CHILD
+                ) {
                     transactionService.getLastTransactions()
                 }
                 _ui.value = UiState.Success
