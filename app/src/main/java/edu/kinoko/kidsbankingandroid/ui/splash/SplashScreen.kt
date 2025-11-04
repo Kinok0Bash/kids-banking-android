@@ -19,11 +19,11 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 
 @Composable
 fun SplashScreen(nav: NavHostController) {
-    val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
+    val vm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
 
-    val state by sessionVm.state.collectAsStateWithLifecycle()
+    val state by vm.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) { sessionVm.bootstrap() }
+    LaunchedEffect(Unit) { vm.bootstrap() }
 
     LaunchedEffect(state) {
         when (state) {

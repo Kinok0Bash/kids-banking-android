@@ -32,10 +32,10 @@ import edu.kinoko.kidsbankingandroid.ui.util.UiState
 fun ChildAccountScreen(
     nav: NavHostController
 ) {
-    val childScreenVm: ChildAccountViewModel = viewModel(factory = ChildAccountViewModel.factory())
-    val uiState by childScreenVm.ui.collectAsStateWithLifecycle()
+    val vm: ChildAccountViewModel = viewModel(factory = ChildAccountViewModel.factory())
+    val uiState by vm.ui.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) { childScreenVm.bootstrap() }
+    LaunchedEffect(Unit) { vm.bootstrap() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(

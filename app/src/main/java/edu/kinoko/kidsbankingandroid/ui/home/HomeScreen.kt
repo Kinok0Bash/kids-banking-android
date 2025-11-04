@@ -39,10 +39,10 @@ fun HomeScreen(
     nav: NavHostController
 ) {
     val scope = rememberCoroutineScope()
-    val homeScreenVm: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.factory())
-    val uiState by homeScreenVm.ui.collectAsStateWithLifecycle()
+    val vm: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.factory())
+    val uiState by vm.ui.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) { homeScreenVm.bootstrap() }
+    LaunchedEffect(Unit) { vm.bootstrap() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -90,7 +90,7 @@ fun HomeScreen(
                                 launchSingleTop = true
                             }
                         },
-                        getSalary = { homeScreenVm.getSalary() }
+                        getSalary = { vm.getSalary() }
                     )
                 }
             }
