@@ -6,10 +6,12 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
@@ -21,6 +23,7 @@ import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingScreen
 import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
 import edu.kinoko.kidsbankingandroid.ui.theme.KidsBankingAndroidTheme
+import edu.kinoko.kidsbankingandroid.ui.transactionresult.TransactionStatusScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +50,9 @@ class MainActivity : ComponentActivity() {
                         GlobalError(
                             retry = {
                                 nav.navigate(AppRoutes.SPLASH) {
-                                    popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                                    popUpTo(nav.graph.findStartDestination().id) {
+                                        inclusive = true
+                                    }
                                     launchSingleTop = true
                                 }
                             }
@@ -86,6 +91,20 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = AppRoutes.MONEY_SENDING) {
                         MoneySendingScreen(nav)
+                    }
+
+                    composable(
+                        route = "${AppRoutes.TRANSACTION_STATUS}?status={status}&sum={sum}",
+                        arguments = listOf(
+                            navArgument("status") { type = NavType.StringType },
+                            navArgument("sum") { type = NavType.IntType },
+                        )
+                    ) { backStackEntry ->
+                        TransactionStatusScreen(
+                            nav = nav,
+                            statusString = backStackEntry.arguments?.getString("status") ?: "FAIL",
+                            sum = backStackEntry.arguments?.getInt("sum") ?: -1
+                        )
                     }
                 }
             }

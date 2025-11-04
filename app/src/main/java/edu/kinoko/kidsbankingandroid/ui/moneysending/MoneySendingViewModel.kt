@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import edu.kinoko.kidsbankingandroid.api.request.TransferRequest
 import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
+import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.TransactionStatus
 import edu.kinoko.kidsbankingandroid.data.service.Services
 import edu.kinoko.kidsbankingandroid.data.service.TransactionService
@@ -50,18 +51,16 @@ class MoneySendingViewModel(
         inputClear()
     }
 
-    fun sendTransaction() {
+    suspend fun sendTransaction(): String {
         _ui.value = UiState.Loading
-        viewModelScope.launch {
-            try {
-                val response = transactionService.transfer(
-                    TransferRequest(amount.value)
-                )
-                require(response.status != TransactionStatus.OK)
-                _ui.value = UiState.Success
-            } catch (ex: Exception) {
-                showError(ex.humanMessage())
-            }
+        return try {
+            val response = transactionService.transfer(TransferRequest(amount.value))
+            _ui.value = UiState.Success
+            "${AppRoutes.TRANSACTION_STATUS}?status=${response.status.name}&sum=${response.sum}"
+        } catch (ex: Exception) {
+            showError(ex.humanMessage())
+            // можно вернуть экран ошибки или пустую строку
+            "${AppRoutes.TRANSACTION_STATUS}?status=${TransactionStatus.FAIL.name}&sum=-1"
         }
     }
 
@@ -92,6 +91,7 @@ class MoneySendingViewModel(
                         ?: "{\"error\":\"Неизвестная ошибка\"}"
                 ).error
             }
+
             is IllegalStateException -> "Ошибка при отправке средств ребенку"
             is IOException -> "Проблема с сетью"
             else -> message ?: "Неизвестная ошибка"
@@ -99,13 +99,14 @@ class MoneySendingViewModel(
     }
 
     companion object {
-        fun factory() = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MoneySendingViewModel(
-                    Services.transaction,
-                ) as T
+        fun factory() =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return MoneySendingViewModel(
+                        Services.transaction,
+                    ) as T
+                }
             }
-        }
     }
 }

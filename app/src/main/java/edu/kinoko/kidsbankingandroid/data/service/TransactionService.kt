@@ -11,7 +11,7 @@ class TransactionService(
 ) {
 
     suspend fun getLastTransactions(): List<Transaction> {
-        val resp = api.getLastTransactions()
+        val resp = api.getLastTransactions().subList(0, 5)
         TransactionHistoryStore.lastTransactions = resp
         return resp
     }

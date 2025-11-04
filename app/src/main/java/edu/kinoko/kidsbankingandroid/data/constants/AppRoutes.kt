@@ -11,6 +11,8 @@ object AppRoutes {
 
     // Родитель
     const val CHILD_ACCOUNT = "child-account-menu"
-
     const val MONEY_SENDING = "money-sending"
+
+    // Статусы транзакций
+    const val TRANSACTION_STATUS = "transaction-status"
 }

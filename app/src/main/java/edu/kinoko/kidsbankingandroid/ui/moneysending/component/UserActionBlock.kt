@@ -1,23 +1,26 @@
 package edu.kinoko.kidsbankingandroid.ui.moneysending.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.ui.components.CustomButton
 import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingViewModel
 import edu.kinoko.kidsbankingandroid.ui.moneysending.component.keyboard.SendingKeyboard
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserActionBlock(
     vm: MoneySendingViewModel,
     nav: NavHostController,
 ) {
+    val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
 
     Column(
@@ -45,10 +48,13 @@ fun UserActionBlock(
         CustomButton(
             "Перевести",
             onClick = {
-                vm.sendTransaction()
-                nav.navigate(AppRoutes.CHILD_ACCOUNT) {
-                    popUpTo(nav.graph.id) { inclusive = true }
-                    launchSingleTop = true
+                scope.launch {
+                    val route = vm.sendTransaction()
+                    Log.d("TRANSACTION ROUTE", route)
+                    nav.navigate(route) {
+                        popUpTo(nav.graph.id) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             }
         )
