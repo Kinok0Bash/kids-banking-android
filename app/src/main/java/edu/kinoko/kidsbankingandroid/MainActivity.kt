@@ -20,8 +20,10 @@ import edu.kinoko.kidsbankingandroid.ui.childaccount.ChildAccountScreen
 import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
 import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingScreen
+import edu.kinoko.kidsbankingandroid.ui.pay.QrPayScreen
 import edu.kinoko.kidsbankingandroid.ui.profile.ProfileScreen
 import edu.kinoko.kidsbankingandroid.ui.splash.SplashScreen
+import edu.kinoko.kidsbankingandroid.ui.splash.TransactionSplashScreen
 import edu.kinoko.kidsbankingandroid.ui.theme.KidsBankingAndroidTheme
 import edu.kinoko.kidsbankingandroid.ui.transactionresult.TransactionStatusScreen
 
@@ -91,6 +93,18 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = AppRoutes.MONEY_SENDING) {
                         MoneySendingScreen(nav)
+                    }
+
+                    composable(route = AppRoutes.QR_PAY) {
+                        QrPayScreen()
+                    }
+
+                    composable(
+                        route = "${AppRoutes.TRANSACTION_SPLASH}?amount={amount}",
+                        arguments = listOf(navArgument("amount") { type = NavType.IntType })
+                    ) { backStackEntry ->
+                        val amount = backStackEntry.arguments?.getInt("amount") ?: 0
+                        TransactionSplashScreen(nav, amount)
                     }
 
                     composable(

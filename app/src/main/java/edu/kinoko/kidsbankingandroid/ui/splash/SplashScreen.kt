@@ -16,6 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionState
+import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionViewModel
 
 @Composable
 fun SplashScreen(nav: NavHostController) {

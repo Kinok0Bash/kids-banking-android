@@ -18,6 +18,7 @@ fun CustomButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = Primary,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -25,7 +26,8 @@ fun CustomButton(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        enabled = enabled
     ) {
         Text(text)
     }

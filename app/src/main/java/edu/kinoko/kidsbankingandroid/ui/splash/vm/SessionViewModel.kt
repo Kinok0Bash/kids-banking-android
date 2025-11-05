@@ -1,4 +1,4 @@
-package edu.kinoko.kidsbankingandroid.ui.splash
+package edu.kinoko.kidsbankingandroid.ui.splash.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

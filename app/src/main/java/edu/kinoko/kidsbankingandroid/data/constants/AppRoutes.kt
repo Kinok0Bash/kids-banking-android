@@ -13,6 +13,10 @@ object AppRoutes {
     const val CHILD_ACCOUNT = "child-account-menu"
     const val MONEY_SENDING = "money-sending"
 
+    // Ребенок
+    const val QR_PAY = "qr-pay"
+
     // Статусы транзакций
     const val TRANSACTION_STATUS = "transaction-status"
+    const val TRANSACTION_SPLASH = "transaction-splash"
 }

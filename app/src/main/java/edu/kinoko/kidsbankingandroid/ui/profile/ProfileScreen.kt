@@ -26,7 +26,7 @@ import edu.kinoko.kidsbankingandroid.ui.components.BackHeader
 import edu.kinoko.kidsbankingandroid.ui.components.CustomButton
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.profile.component.UserInfo
-import edu.kinoko.kidsbankingandroid.ui.splash.SessionViewModel
+import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionViewModel
 import edu.kinoko.kidsbankingandroid.ui.theme.ButtonRed
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
