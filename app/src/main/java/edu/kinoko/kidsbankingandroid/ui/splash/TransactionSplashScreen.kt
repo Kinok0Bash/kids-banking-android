@@ -12,20 +12,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import edu.kinoko.kidsbankingandroid.api.request.PayRequest
+import edu.kinoko.kidsbankingandroid.data.enums.TransactionType
 import edu.kinoko.kidsbankingandroid.ui.splash.vm.TransactionSplashViewModel
 
 @Composable
 fun TransactionSplashScreen(
     nav: NavHostController,
-    amount: Int,
+    type: TransactionType,
+    to: Int,
+    sum: Int,
 ) {
     val vm: TransactionSplashViewModel = viewModel(factory = TransactionSplashViewModel.factory())
 
-    LaunchedEffect(amount) {
-        val route = vm.send(amount)
-        nav.navigate(route) {
-            popUpTo(nav.graph.id) { inclusive = true }
-            launchSingleTop = true
+    LaunchedEffect(type) {
+        when (type) {
+            TransactionType.QR_PAY -> {
+                val route = vm.pay(
+                    PayRequest(
+                        shopId = to,
+                        sum = sum
+                    )
+                )
+                nav.navigate(route) {
+                    popUpTo(nav.graph.id) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            TransactionType.TRANSFER -> {
+                val route = vm.transfer(sum)
+                nav.navigate(route) {
+                    popUpTo(nav.graph.id) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
         }
     }
 

@@ -75,12 +75,11 @@ class SessionViewModel(
         /** ---- helpers ---- **/
         private fun Throwable.isNetworkProblem(): Boolean =
             this is UnknownHostException ||
-                    this is ConnectException ||
                     this is SocketTimeoutException ||
                     (cause is IOException)
 
         private fun Throwable.isServerDown(): Boolean =
-            (this as? HttpException)?.code() in 500..599
+            (this as? HttpException)?.code() in 500..599 || this is ConnectException
 
         private fun Throwable.isAuthProblem(): Boolean =
             (this as? HttpException)?.code() in setOf(401, 403)

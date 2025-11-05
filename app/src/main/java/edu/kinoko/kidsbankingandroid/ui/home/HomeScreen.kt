@@ -30,6 +30,7 @@ import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.home.component.HistoryBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
+import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ChildButtonBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ParentButtonBlock
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.launch
@@ -82,8 +83,8 @@ fun HomeScreen(
                     Spacer(Modifier.size(10.dp))
                     HistoryBlock()
                 }
-                when {
-                    UserStore.userData.role == Role.PARENT -> ParentButtonBlock(
+                when(UserStore.userData.role) {
+                     Role.PARENT -> ParentButtonBlock(
                         toKidAccount = {
                             nav.navigate(AppRoutes.CHILD_ACCOUNT) {
                                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
@@ -91,6 +92,15 @@ fun HomeScreen(
                             }
                         },
                         getSalary = { vm.getSalary() }
+                    )
+
+                    Role.CHILD -> ChildButtonBlock(
+                        toQrScanner = {
+                            nav.navigate(AppRoutes.QR_PAY) {
+                                popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
                     )
                 }
             }

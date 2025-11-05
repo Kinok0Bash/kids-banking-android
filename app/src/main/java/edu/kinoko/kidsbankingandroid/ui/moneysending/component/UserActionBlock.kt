@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.data.enums.TransactionType
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.ui.components.CustomButton
 import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingViewModel
@@ -46,7 +47,7 @@ fun UserActionBlock(
         CustomButton(
             "Перевести",
             onClick = {
-                nav.navigate("${AppRoutes.TRANSACTION_SPLASH}?amount=${vm.amount.value}") {
+                nav.navigate("${AppRoutes.TRANSACTION_SPLASH}?type=${TransactionType.TRANSFER.name}&to=0&sum=${vm.amount.value}") {
                     launchSingleTop = true
                 }
             },

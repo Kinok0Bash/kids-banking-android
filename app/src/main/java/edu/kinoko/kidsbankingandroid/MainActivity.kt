@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.Role
+import edu.kinoko.kidsbankingandroid.data.enums.TransactionType
 import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
 import edu.kinoko.kidsbankingandroid.ui.childaccount.ChildAccountScreen
@@ -96,15 +97,26 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(route = AppRoutes.QR_PAY) {
-                        QrPayScreen()
+                        QrPayScreen(nav)
                     }
 
                     composable(
-                        route = "${AppRoutes.TRANSACTION_SPLASH}?amount={amount}",
-                        arguments = listOf(navArgument("amount") { type = NavType.IntType })
+                        route = "${AppRoutes.TRANSACTION_SPLASH}?type={type}&to={to}&sum={sum}",
+                        arguments = listOf(
+                            navArgument("sum") { type = NavType.IntType },
+                            navArgument("to") { type = NavType.IntType },
+                            navArgument("type") { type = NavType.StringType },
+                        )
                     ) { backStackEntry ->
-                        val amount = backStackEntry.arguments?.getInt("amount") ?: 0
-                        TransactionSplashScreen(nav, amount)
+                        val sum = backStackEntry.arguments?.getInt("sum") ?: 0
+                        val type = backStackEntry.arguments?.getString("type") ?: ""
+                        val to = backStackEntry.arguments?.getInt("to") ?: 0
+                        TransactionSplashScreen(
+                            nav = nav,
+                            type = TransactionType.parce(type),
+                            to = to,
+                            sum = sum,
+                        )
                     }
 
                     composable(
