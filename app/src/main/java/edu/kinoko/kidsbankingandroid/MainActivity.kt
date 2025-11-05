@@ -19,6 +19,7 @@ import edu.kinoko.kidsbankingandroid.ui.auth.AuthScreen
 import edu.kinoko.kidsbankingandroid.ui.auth.RegistrationScreen
 import edu.kinoko.kidsbankingandroid.ui.childaccount.ChildAccountScreen
 import edu.kinoko.kidsbankingandroid.ui.globalerror.GlobalError
+import edu.kinoko.kidsbankingandroid.ui.history.HistoryScreen
 import edu.kinoko.kidsbankingandroid.ui.home.HomeScreen
 import edu.kinoko.kidsbankingandroid.ui.moneysending.MoneySendingScreen
 import edu.kinoko.kidsbankingandroid.ui.pay.QrPayScreen
@@ -98,6 +99,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = AppRoutes.QR_PAY) {
                         QrPayScreen(nav)
+                    }
+
+                    composable(route = AppRoutes.HISTORY) {
+                        HistoryScreen(nav)
                     }
 
                     composable(

@@ -1,17 +1,17 @@
-package edu.kinoko.kidsbankingandroid.ui.profile
+package edu.kinoko.kidsbankingandroid.ui.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,25 +25,23 @@ import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
 import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
-import edu.kinoko.kidsbankingandroid.ui.components.BackHeader
 import edu.kinoko.kidsbankingandroid.ui.components.CustomButton
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.profile.component.UserInfo
-import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionViewModel
-import edu.kinoko.kidsbankingandroid.ui.theme.ButtonRed
+import edu.kinoko.kidsbankingandroid.ui.components.ScreenHeader
+import edu.kinoko.kidsbankingandroid.ui.history.component.OperationsGroup
 import edu.kinoko.kidsbankingandroid.ui.theme.White
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
-fun ProfileScreen(
-    nav: NavHostController,
+fun HistoryScreen(
+    nav: NavHostController
 ) {
-    val sessionVm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
-    val profileVm: ProfileViewModel = viewModel(factory = ProfileViewModel.factory())
+    val vm: HistoryScreenViewModel = viewModel(factory = HistoryScreenViewModel.factory())
+    val uiState by vm.ui.collectAsStateWithLifecycle()
 
-    val uiState by profileVm.ui.collectAsStateWithLifecycle()
+    val transactionGroups = vm.transactionGroups.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) { profileVm.getProfileInfo() }
+    LaunchedEffect(Unit) { vm.bootstrap() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -56,59 +54,48 @@ fun ProfileScreen(
                     .padding(24.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                ScreenHeader("История операций")
+
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(40.dp)
                 ) {
-                    BackHeader(
-                        text = "Личный кабинет",
-                        onClick = {
-                            nav.navigate(AppRoutes.HOME) {
-                                popUpTo(nav.graph.id) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    )
-                    UserInfo()
+                    transactionGroups.value.forEach { (date, transactions) ->
+                        OperationsGroup(date, transactions)
+                    }
                 }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (UserStore.userData.role == Role.PARENT && !UserStore.userData.isGetKid) {
-                        CustomButton(
-                            text = "Добавить ребенка",
-                            onClick = {
-                                nav.navigate(AppRoutes.NEW_CHILD) {
+
+                CustomButton(
+                    text = "Назад",
+                    onClick = {
+                        when (UserStore.userData.role) {
+                            Role.PARENT -> {
+                                nav.navigate(AppRoutes.CHILD_ACCOUNT) {
                                     popUpTo(nav.graph.id) { inclusive = true }
                                     launchSingleTop = true
                                 }
-                            },
-                        )
-                    }
-                    CustomButton(
-                        text = "Выйти",
-                        onClick = {
-                            sessionVm.logout()
-                            nav.navigate(AppRoutes.AUTH) {
-                                popUpTo(nav.graph.id) { inclusive = true }
-                                launchSingleTop = true
                             }
-                        },
-                        color = ButtonRed
-                    )
-                    Text(
-                        "uuid: ${UserStore.userData.id}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+
+                            Role.CHILD -> {
+                                nav.navigate(AppRoutes.HOME) {
+                                    popUpTo(nav.graph.id) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                    },
+                )
             }
         }
 
         if (uiState is UiState.Loading) {
             Box(
-                modifier = Modifier.fillMaxSize().background(color = White),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = White),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -123,7 +110,7 @@ fun ProfileScreen(
         if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.BottomCenter)
                     .padding(16.dp)
             ) {
                 Modal(

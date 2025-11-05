@@ -8,6 +8,7 @@ object AppRoutes {
     const val REGISTRATION = "registration"
     const val NEW_CHILD = "new-child-registration"
     const val PROFILE = "profile"
+    const val HISTORY = "history"
 
     // Родитель
     const val CHILD_ACCOUNT = "child-account-menu"

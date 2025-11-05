@@ -30,7 +30,7 @@ import edu.kinoko.kidsbankingandroid.data.enums.TransactionStatus
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.data.util.grouped
 import edu.kinoko.kidsbankingandroid.ui.components.CustomButton
-import edu.kinoko.kidsbankingandroid.ui.transactionresult.component.ScreenHeader
+import edu.kinoko.kidsbankingandroid.ui.components.ScreenHeader
 
 @Composable
 fun TransactionStatusScreen(

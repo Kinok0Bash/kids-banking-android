@@ -1,61 +1,35 @@
-package edu.kinoko.kidsbankingandroid.ui.moneysending
+package edu.kinoko.kidsbankingandroid.ui.history
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import edu.kinoko.kidsbankingandroid.api.response.ErrorResponse
-import edu.kinoko.kidsbankingandroid.data.service.BalanceService
+import edu.kinoko.kidsbankingandroid.data.dto.Transaction
 import edu.kinoko.kidsbankingandroid.data.service.Services
-import edu.kinoko.kidsbankingandroid.data.store.BalanceStore
+import edu.kinoko.kidsbankingandroid.data.service.TransactionService
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-class MoneySendingViewModel(
-    private val balanceService: BalanceService,
+class HistoryScreenViewModel(
+    private val transactionService: TransactionService
 ) : ViewModel() {
     private val _ui = MutableStateFlow<UiState>(UiState.Idle)
     val ui: StateFlow<UiState> = _ui
 
-    private val _amount = MutableStateFlow(0)
-    val amount: StateFlow<Int> = _amount
-
-    fun inputAppend(d: Int): Boolean {
-        val attempted = _amount.value * 10 + d
-        val limit = BalanceStore.parentBalance
-        val clamped = attempted.coerceAtMost(limit)
-        val exceeded = attempted > limit
-        _amount.value = clamped
-        return exceeded
-    }
-
-    fun inputBackspace() {
-        _amount.value /= 10
-    }
-
-    fun inputClear() {
-        _amount.value = 0
-    }
-
-    fun bootstrap() {
-        _ui.value = UiState.Loading
-        viewModelScope.launch {
-            try {
-                balanceService.getParentBalance()
-                inputClear()
-                _ui.value = UiState.Success
-            } catch (ex: Exception) {
-                showError(ex.humanMessage())
-            }
-        }
-    }
+    private val _transactionGroups =
+        MutableStateFlow<LinkedHashMap<LocalDate, List<Transaction>>>(linkedMapOf())
+    val transactionGroups: StateFlow<LinkedHashMap<LocalDate, List<Transaction>>> = _transactionGroups
 
     private var errorJob: Job? = null
 
@@ -73,8 +47,25 @@ class MoneySendingViewModel(
         }
     }
 
+    fun bootstrap() {
+        _ui.value = UiState.Loading
+        viewModelScope.launch {
+            try {
+                val resp = transactionService.getAllTransactions()
+                _transactionGroups.value = resp
+                    .groupBy { it.date.toJavaLocalDateTime().toLocalDate().toKotlinLocalDate() }
+                    .toList()
+                    .sortedByDescending { (date, _) -> date }
+                    .toMap(LinkedHashMap())
+                _ui.value = UiState.Success
+            } catch (ex: Exception) {
+                showError(ex.humanMessage())
+            }
+        }
+    }
+
     private fun Exception.humanMessage(): String {
-        Log.e("AuthViewModel", this.stackTraceToString())
+        Log.e("HystoryScreen", this.stackTraceToString())
         return when (this) {
             is HttpException -> {
                 Json.decodeFromString<ErrorResponse>(
@@ -85,19 +76,17 @@ class MoneySendingViewModel(
                 ).error
             }
 
-            is IllegalStateException -> "Ошибка при отправке средств ребенку"
             is IOException -> "Проблема с сетью"
             else -> message ?: "Неизвестная ошибка"
         }
     }
 
     companion object {
-        fun factory() =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return MoneySendingViewModel(Services.balance) as T
-                }
+        fun factory() = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HistoryScreenViewModel(Services.transaction) as T
             }
+        }
     }
 }

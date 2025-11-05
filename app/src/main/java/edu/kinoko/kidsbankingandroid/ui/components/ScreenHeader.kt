@@ -1,4 +1,4 @@
-package edu.kinoko.kidsbankingandroid.ui.transactionresult.component
+package edu.kinoko.kidsbankingandroid.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

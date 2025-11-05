@@ -13,7 +13,9 @@ private val RU_MONTHS = arrayOf(
     "июля", "августа", "сентября", "октября", "ноября", "декабря"
 )
 
-fun KotlinLocalDate.toHumanString(): String = "$day ${RU_MONTHS[month.number - 1]} $year"
+fun KotlinLocalDate.toHumanString(
+    withYear: Boolean = true
+): String = "$day ${RU_MONTHS[month.number - 1]}${if (withYear) " $year" else ""}"
 
 @OptIn(ExperimentalTime::class)
 fun KotlinLocalDate.toAgeString(): String {

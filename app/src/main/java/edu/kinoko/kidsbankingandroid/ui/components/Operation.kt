@@ -1,4 +1,4 @@
-package edu.kinoko.kidsbankingandroid.ui.home.component
+package edu.kinoko.kidsbankingandroid.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,10 +1,13 @@
 package edu.kinoko.kidsbankingandroid.ui.childaccount
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import edu.kinoko.kidsbankingandroid.ui.childaccount.component.ChildAccountButto
 import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
 import edu.kinoko.kidsbankingandroid.ui.components.BackHeader
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
+import edu.kinoko.kidsbankingandroid.ui.theme.White
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
@@ -64,6 +68,20 @@ fun ChildAccountScreen(
                     )
                 }
                 ChildAccountButtonBlock(nav)
+            }
+        }
+
+        if (uiState is UiState.Loading) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(color = White),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(90.dp),
+                        strokeWidth = 6.dp,
+                    )
+                }
             }
         }
 

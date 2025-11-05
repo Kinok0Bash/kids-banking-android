@@ -1,5 +1,6 @@
 package edu.kinoko.kidsbankingandroid.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -26,12 +28,13 @@ import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.data.store.BalanceStore
 import edu.kinoko.kidsbankingandroid.data.store.UserStore
 import edu.kinoko.kidsbankingandroid.data.util.grouped
-import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.components.AccountCart
+import edu.kinoko.kidsbankingandroid.ui.components.Modal
 import edu.kinoko.kidsbankingandroid.ui.home.component.HistoryBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.ProfileButton
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ChildButtonBlock
 import edu.kinoko.kidsbankingandroid.ui.home.component.buttonblock.ParentButtonBlock
+import edu.kinoko.kidsbankingandroid.ui.theme.White
 import edu.kinoko.kidsbankingandroid.ui.util.UiState
 import kotlinx.coroutines.launch
 
@@ -81,7 +84,14 @@ fun HomeScreen(
                         }
                     }
                     Spacer(Modifier.size(10.dp))
-                    HistoryBlock()
+                    HistoryBlock(
+                        onClick = {
+                            nav.navigate(AppRoutes.HISTORY) {
+                                popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
                 when(UserStore.userData.role) {
                      Role.PARENT -> ParentButtonBlock(
@@ -101,6 +111,20 @@ fun HomeScreen(
                                 launchSingleTop = true
                             }
                         }
+                    )
+                }
+            }
+        }
+
+        if (uiState is UiState.Loading) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(color = White),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(90.dp),
+                        strokeWidth = 6.dp,
                     )
                 }
             }

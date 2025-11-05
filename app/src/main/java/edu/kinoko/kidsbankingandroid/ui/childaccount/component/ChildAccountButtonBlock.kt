@@ -36,6 +36,12 @@ fun ChildAccountButtonBlock(
             text = "Пополнить счет"
         )
         ChildAccountMenuButton(
+            onClick = {
+                nav.navigate(AppRoutes.HISTORY) {
+                    popUpTo(nav.graph.id) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
             icon = Icons.Default.History,
             text = "История операций"
         )
