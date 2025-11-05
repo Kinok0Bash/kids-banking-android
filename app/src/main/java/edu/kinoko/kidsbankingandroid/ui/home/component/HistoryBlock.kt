@@ -25,6 +25,7 @@ fun HistoryBlock() {
         )
         TransactionHistoryStore.lastTransactions.forEach {
             Operation(
+                id = it.toId,
                 name = it.name,
                 currency = it.sum.grouped(),
                 type = it.category

@@ -23,6 +23,7 @@ import edu.kinoko.kidsbankingandroid.ui.theme.TransactionGreen
 
 @Composable
 fun Operation(
+    id: Int,
     name: String,
     currency: String,
     type: String,
@@ -45,7 +46,7 @@ fun Operation(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val (textColor, text) = if (type == "Входящий") {
+                val (textColor, text) = if (id == 0) {
                     TransactionGreen to "+ $currency"
                 } else {
                     Black to "- $currency"
