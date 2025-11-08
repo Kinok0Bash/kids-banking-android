@@ -3,6 +3,10 @@ package edu.kinoko.kidsbankingandroid.data.config
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import edu.kinoko.kidsbankingandroid.api.AuthClient
+import edu.kinoko.kidsbankingandroid.api.BalanceClient
+import edu.kinoko.kidsbankingandroid.api.LimitClient
+import edu.kinoko.kidsbankingandroid.api.ParentClient
+import edu.kinoko.kidsbankingandroid.api.TransactionClient
 import edu.kinoko.kidsbankingandroid.data.store.AccessTokenStore
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -35,6 +39,18 @@ object Network {
 
     // Тот же интерфейс, но за ним клиент с Authenticator (для whoAmI и всего защищённого)
     lateinit var authClientAuthed: AuthClient
+        private set
+
+    lateinit var balanceClient: BalanceClient
+        private set
+
+    lateinit var limitClient: LimitClient
+        private set
+
+    lateinit var parentClient: ParentClient
+        private set
+
+    lateinit var transactionClient: TransactionClient
         private set
 
     private val serializers = SerializersModule {
@@ -84,5 +100,13 @@ object Network {
 
         // Тот же интерфейс, но за ним клиент с авто-рефрешем
         authClientAuthed = retrofitAuthed.create(AuthClient::class.java)
+
+        balanceClient = retrofitAuthed.create(BalanceClient::class.java)
+
+        limitClient = retrofitAuthed.create(LimitClient::class.java)
+
+        parentClient = retrofitAuthed.create(ParentClient::class.java)
+
+        transactionClient = retrofitAuthed.create(TransactionClient::class.java)
     }
 }

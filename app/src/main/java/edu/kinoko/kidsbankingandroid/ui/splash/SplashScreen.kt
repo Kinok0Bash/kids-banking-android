@@ -16,10 +16,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
+import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionState
+import edu.kinoko.kidsbankingandroid.ui.splash.vm.SessionViewModel
 
 @Composable
 fun SplashScreen(nav: NavHostController) {
     val vm: SessionViewModel = viewModel(factory = SessionViewModel.factory())
+
     val state by vm.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) { vm.bootstrap() }
@@ -30,10 +33,17 @@ fun SplashScreen(nav: NavHostController) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }
-            SessionState.Guest -> nav.navigate(AppRoutes.AUTH) {
+
+            SessionState.Unauthorized -> nav.navigate(AppRoutes.AUTH) {
                 popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
                 launchSingleTop = true
             }
+
+            SessionState.NetworkError -> nav.navigate(AppRoutes.GLOBAL_ERROR) {
+                popUpTo(nav.graph.findStartDestination().id) { inclusive = true }
+                launchSingleTop = true
+            }
+
             SessionState.Checking -> Unit
         }
     }

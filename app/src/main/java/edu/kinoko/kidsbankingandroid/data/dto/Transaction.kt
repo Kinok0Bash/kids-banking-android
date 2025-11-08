@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Transaction(
+    val toId: Int,
     val name: String,
     val category: String,
     val sum: Int,

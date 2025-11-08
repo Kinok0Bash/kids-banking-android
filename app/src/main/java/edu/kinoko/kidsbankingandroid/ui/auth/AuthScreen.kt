@@ -20,10 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.dto.FieldConfig
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
@@ -33,15 +38,13 @@ import edu.kinoko.kidsbankingandroid.ui.auth.utils.validateLogin
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePassword
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.theme.Secondary
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun AuthScreen(
-    home: () -> Unit,
-    registration: () -> Unit,
+    nav: NavHostController
 ) {
-    val vm: AuthViewModel =
-        androidx.lifecycle.viewmodel.compose.viewModel(factory = AuthViewModel.factory())
+    val vm: AuthViewModel = viewModel(factory = AuthViewModel.factory())
     val uiState by vm.ui.collectAsStateWithLifecycle()
 
     var formValues by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
@@ -63,7 +66,7 @@ fun AuthScreen(
     )
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) home()
+        if (uiState is UiState.Success) home(nav)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -79,7 +82,15 @@ fun AuthScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp)
-                        .background(color = Secondary, shape = RoundedCornerShape(16.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFEBD8FF),
+                                    Color(0x00FFFFFF)
+                                )
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        )
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,7 +122,7 @@ fun AuthScreen(
 
                     Spacer(Modifier.size(16.dp))
 
-                    val loading = uiState is AuthUiState.Loading
+                    val loading = uiState is UiState.Loading
                     AuthButtonsBlock(
                         buttonText = if (loading) {
                             "Входим..."
@@ -126,23 +137,34 @@ fun AuthScreen(
                             }
                         },
                         textButtonText = "Нет аккаунта? Регистрация",
-                        textButtonAction = registration,
+                        textButtonAction = { registration(nav) },
                     )
                 }
             }
         }
 
-        if (uiState is AuthUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as AuthUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }
         }
     }
+}
+
+private fun home(nav: NavHostController) {
+    nav.navigate(AppRoutes.HOME) {
+        popUpTo(nav.graph.id) { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
+private fun registration(nav: NavHostController) {
+    nav.navigate(AppRoutes.REGISTRATION)
 }

@@ -12,6 +12,9 @@ val Primary = Color(0xFF2E2F34)
 val Secondary = Color(0xFFEEEFF2)
 
 val ButtonRed = Color(0xFFA60007)
+val ButtonGreen = Color(0xFF1B9F00)
+
+val TransactionGreen = Color(0xFF1B9F00)
 
 // Modal colors
 val InfoBackground = Secondary
@@ -25,3 +28,5 @@ val ErrorIcon = Color(0xFFC20101)
 
 val SuccessBackground = Color(0xFF89FFB0)
 val SuccessIcon = Color(0xFF419F45)
+
+val AlfaColor = Color(0x00000000)

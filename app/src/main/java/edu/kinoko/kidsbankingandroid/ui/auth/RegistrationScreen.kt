@@ -21,13 +21,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import edu.kinoko.kidsbankingandroid.data.constants.AppRoutes
 import edu.kinoko.kidsbankingandroid.data.constants.AuthFieldNames
 import edu.kinoko.kidsbankingandroid.data.dto.FieldConfig
 import edu.kinoko.kidsbankingandroid.data.enums.ModalType
+import edu.kinoko.kidsbankingandroid.data.enums.Role
 import edu.kinoko.kidsbankingandroid.ui.auth.components.AuthButtonsBlock
 import edu.kinoko.kidsbankingandroid.ui.auth.components.DynamicForm
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validateBirthDateRaw
@@ -37,15 +43,14 @@ import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePassword
 import edu.kinoko.kidsbankingandroid.ui.auth.utils.validatePasswordRepeat
 import edu.kinoko.kidsbankingandroid.ui.components.Header
 import edu.kinoko.kidsbankingandroid.ui.components.Modal
-import edu.kinoko.kidsbankingandroid.ui.theme.Secondary
+import edu.kinoko.kidsbankingandroid.ui.util.UiState
 
 @Composable
 fun RegistrationScreen(
-    home: () -> Unit,
-    auth: () -> Unit,
+    nav: NavHostController,
+    regType: Role
 ) {
-    val vm: AuthViewModel =
-        androidx.lifecycle.viewmodel.compose.viewModel(factory = AuthViewModel.factory())
+    val vm: AuthViewModel = viewModel(factory = AuthViewModel.factory())
     val uiState by vm.ui.collectAsStateWithLifecycle()
 
     var step by remember { mutableIntStateOf(1) }
@@ -58,7 +63,7 @@ fun RegistrationScreen(
     val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) home()
+        if (uiState is UiState.Success) home(nav)
     }
 
     val authFields = listOf(
@@ -125,7 +130,15 @@ fun RegistrationScreen(
                                 640.dp
                             }
                         )
-                        .background(color = Secondary, shape = RoundedCornerShape(16.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFEBD8FF),
+                                    Color(0x00FFFFFF)
+                                ),
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        )
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -191,10 +204,10 @@ fun RegistrationScreen(
                                 }
                             },
                             textButtonText = "Есть аккаунт? Войти",
-                            textButtonAction = auth
+                            textButtonAction = { auth(nav) }
                         )
                     } else {
-                        val loading = uiState is AuthUiState.Loading
+                        val loading = uiState is UiState.Loading
                         AuthButtonsBlock(
                             buttonText = if (loading) {
                                 "Регистрируем..."
@@ -205,7 +218,7 @@ fun RegistrationScreen(
                                 showAll = true
                                 errors = validateAll(formValues)
                                 if (!errors.values.any { it != null } && !loading) vm.register(
-                                    formValues
+                                    formValues, regType
                                 )
                             },
                             textButtonText = "Назад",
@@ -220,17 +233,28 @@ fun RegistrationScreen(
             }
         }
 
-        if (uiState is AuthUiState.Error) {
+        if (uiState is UiState.Error) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
                 Modal(
-                    text = (uiState as AuthUiState.Error).message,
+                    text = (uiState as UiState.Error).message,
                     modalType = ModalType.ERROR
                 )
             }
         }
+    }
+}
+
+private fun auth(nav: NavHostController) {
+    nav.navigate(AppRoutes.AUTH)
+}
+
+private fun home(nav: NavHostController) {
+    nav.navigate(AppRoutes.HOME) {
+        popUpTo(nav.graph.id) { inclusive = true }
+        launchSingleTop = true
     }
 }
