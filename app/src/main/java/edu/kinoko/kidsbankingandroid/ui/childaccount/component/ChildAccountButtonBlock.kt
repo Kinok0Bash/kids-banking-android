@@ -46,6 +46,12 @@ fun ChildAccountButtonBlock(
             text = "История операций"
         )
         ChildAccountMenuButton(
+            onClick = {
+                nav.navigate(AppRoutes.CATEGORY_LIMIT) {
+                    popUpTo(nav.graph.id) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
             icon = Icons.Default.Lock,
             text = "Ограничить категории"
         )

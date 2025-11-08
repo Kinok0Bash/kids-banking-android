@@ -13,6 +13,7 @@ object AppRoutes {
     // Родитель
     const val CHILD_ACCOUNT = "child-account-menu"
     const val MONEY_SENDING = "money-sending"
+    const val CATEGORY_LIMIT = "category-limit"
 
     // Ребенок
     const val QR_PAY = "qr-pay"
